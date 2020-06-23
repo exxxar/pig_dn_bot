@@ -159,8 +159,15 @@ class VipConversation extends Conversation
     public function run()
     {
         //
-        if (!$this->user->is_vip)
+        if (is_null($this->user)) {
             $this->askPhone();
+            return;
+        }
+
+        if (!$this->user->is_vip) {
+            $this->askPhone();
+            return;
+        }
 
     }
 }

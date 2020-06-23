@@ -20,7 +20,7 @@ function createUser($bot)
     $firstName = $telegramUser->getFirstName();
 
     $user = User::where("telegram_chat_id", $id)->first();
-    if ($user == null)
+    if (is_null($user))
         $user = \App\User::create([
             'name' => $username ?? "$id",
             'email' => "$id@t.me",
@@ -29,7 +29,8 @@ function createUser($bot)
             'telegram_chat_id' => $id,
             'is_admin' => false,
             'is_vip' => false,
-            'cashback_money' => false,
+            'cashback_money' => 0,
+            'cashback_beer' => 0,
             'phone' => '',
             'birthday' => '',
         ]);
@@ -95,10 +96,10 @@ $botman->hears('.*Розыгрыш', function ($bot) {
                     $keybord
             ])
         ]);
-});
+})->stopsConversation();
 $botman->hears('.*О нас', function ($bot) {
     $bot->reply("https://telegra.ph/O-Nas-06-23");
-});
+})->stopsConversation();
 
 $botman->hears("/start ([0-9a-zA-Z=]+)", BotManController::class . '@startDataConversation');
 $botman->hears('/start', function ($bot) {
