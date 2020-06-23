@@ -109,8 +109,11 @@ class VipConversation extends Conversation
             } else {
                 $tmp_user = User::where("phone",$tmp_phone)->first();
 
+                $this->bot->reply("test 1");
                 if (!is_null($tmp_user))
                 {
+
+                    $this->bot->reply("test 3");
                     if (!is_null($tmp_user->telegram_chat_id)){
                         $this->bot->reply("Данный номер уже связан с учетной записью телеграм!\n");
                         $this->askPhone();
@@ -120,12 +123,18 @@ class VipConversation extends Conversation
                     $id = $telegramUser->getId();
 
                     $tmp_user->telegram_chat_id = $id;
+                    $tmp_user->save();
+
+                    $this->bot->reply("test 2");
                 }
+
+                $this->bot->reply("test 4");
                 $this->user->phone = $tmp_phone;
                 $this->user->is_vip = true;
-                $this->user->cashback_money +=100 ;
+                $this->user->cashback_beer += 0.3 ;
                 $this->user->save();
 
+                $this->bot->reply("test 5");
                 CashBackHistory::create([
                     'amount'=>0.3,
                     'bill_number'=>'Подарок за регистрацию',
