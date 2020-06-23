@@ -109,7 +109,6 @@ class VipConversation extends Conversation
             } else {
                 $tmp_user = User::where("phone",$tmp_phone)->first();
 
-                $this->bot->reply("test 1");
                 if (!is_null($tmp_user))
                 {
 
@@ -125,16 +124,15 @@ class VipConversation extends Conversation
                     $tmp_user->telegram_chat_id = $id;
                     $tmp_user->save();
 
-                    $this->bot->reply("test 2");
                 }
 
-                $this->bot->reply("test 4");
+
                 $this->user->phone = $tmp_phone;
                 $this->user->is_vip = true;
                 $this->user->cashback_beer += 0.3 ;
                 $this->user->save();
 
-                $this->bot->reply("test 5");
+
                 CashBackHistory::create([
                     'amount'=>0.3,
                     'bill_number'=>'Подарок за регистрацию',
