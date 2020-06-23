@@ -112,7 +112,6 @@ class VipConversation extends Conversation
                 if (!is_null($tmp_user))
                 {
 
-                    $this->bot->reply("test 3");
                     if (!is_null($tmp_user->telegram_chat_id)){
                         $this->bot->reply("Данный номер уже связан с учетной записью телеграм!\n");
                         $this->askPhone();
