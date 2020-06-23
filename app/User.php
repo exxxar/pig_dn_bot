@@ -22,7 +22,7 @@ class User extends Authenticatable
         'telegram_chat_id',
         'fio_from_telegram',
         'cashback_money',
-        'cashback_bear',
+        'cashback_beer',
         'phone',
         'is_vip',
         'birthday',

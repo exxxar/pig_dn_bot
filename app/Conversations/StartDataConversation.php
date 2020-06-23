@@ -28,7 +28,7 @@ class StartDataConversation extends Conversation
     protected $request_user_id;
     protected $user;
     protected $check_info;
-    protected $bear_in_check;
+    protected $beer_in_check;
 
     public function createUser()
     {
@@ -75,7 +75,7 @@ class StartDataConversation extends Conversation
         if (!$user->is_vip)
             array_push($keyboard, ["\xE2\x9A\xA1Анкета VIP-пользователя"]);
         else
-            array_push($keyboard, ["\xE2\x9A\xA1Special BearBack system"]);
+            array_push($keyboard, ["\xE2\x9A\xA1Special BeerBack system"]);
 
         array_push($keyboard, ["\xF0\x9F\x8E\xB0Розыгрыш"]);
         array_push($keyboard, ["\xF0\x9F\x92\xADО Нас"]);
@@ -102,7 +102,7 @@ class StartDataConversation extends Conversation
         $this->request_user_id = null;
         $this->user = null;
         $this->check_info = '';
-        $this->bear_in_check = 0;
+        $this->beer_in_check = 0;
     }
 
     /**
@@ -186,8 +186,8 @@ class StartDataConversation extends Conversation
     {
         $question = Question::create("Какое действие выполнить?")
             ->addButtons([
-                Button::create("Списать BearBack")->value('askforpay'),
-                Button::create("Начислить BearBack")->value('addcashback'),
+                Button::create("Списать BeerBack")->value('askforpay'),
+                Button::create("Начислить BeerBack")->value('addcashback'),
                 Button::create("Завершить работу")->value('stopcashback'),
 
 
@@ -221,7 +221,7 @@ class StartDataConversation extends Conversation
             return;
         }
 
-        $this->bot->reply("У пользователя " . $recipient_user->cashback_bear . " литров BearBack-а");
+        $this->bot->reply("У пользователя " . $recipient_user->cashback_beer . " литров BeerBack-а");
 
         $question = Question::create("Введите кол-во для списания:")
             ->fallback(__("messages.ask_fallback"));
@@ -237,12 +237,12 @@ class StartDataConversation extends Conversation
             $canPay = $recipient_user->cashback_money >= intval($nedded_bonus);
 
             if (!$canPay) {
-                $this->mainMenu("У пользователя недостаточно BearBack-а!");
+                $this->mainMenu("У пользователя недостаточно BeerBack-а!");
 
                 Telegram::sendMessage([
                     'chat_id' => $recipient_user->telegram_chat_id,
                     'parse_mode' => 'Markdown',
-                    'text' => "Требуется списать $nedded_bonus литров пива. У вас в наличии: " . $recipient_user->cashback_bear . " литров.",
+                    'text' => "Требуется списать $nedded_bonus литров пива. У вас в наличии: " . $recipient_user->cashback_beer . " литров.",
                 ]);
                 return;
             }
@@ -280,8 +280,8 @@ class StartDataConversation extends Conversation
             ->fallback(__("messages.ask_fallback"));
 
         $this->ask($question, function (Answer $answer) {
-            $this->bear_in_check = $answer->getText();
-            if (strlen(trim($this->bear_in_check)) == 0 || !is_numeric($this->bear_in_check)) {
+            $this->beer_in_check = $answer->getText();
+            if (strlen(trim($this->beer_in_check)) == 0 || !is_numeric($this->beer_in_check)) {
                 $this->askForCashback();
                 return;
             }
@@ -315,22 +315,22 @@ class StartDataConversation extends Conversation
             return;
         }
 
-        $cashback = ((intval( $this->bear_in_check)??0)*env("CAHSBAK_PROCENT")/100);
-        $parent_cashback = ((intval( $this->bear_in_check)??0)*env("NETWORK_CAHSBAK_PROCENT")/100);
+        $cashback = ((intval( $this->beer_in_check)??0)*env("CAHSBAK_PROCENT")/100);
+        $parent_cashback = ((intval( $this->beer_in_check)??0)*env("NETWORK_CAHSBAK_PROCENT")/100);
 
-        $recipient_user->cashback_bear += $cashback;
+        $recipient_user->cashback_beer += $cashback;
         $recipient_user->save();
 
         if (!is_null($recipient_user->parent_id)){
 
             $parent = $recipient_user->parent;
-            $parent->cashback_bear += $parent_cashback;
+            $parent->cashback_beer += $parent_cashback;
             $parent->save();
 
 
             CashBackHistory::create([
                 'amount' => $parent_cashback,
-                'bill_number' => "BearBack от друга",
+                'bill_number' => "BeerBack от друга",
                 'money_in_bill' => $parent_cashback ,
                 'employee_id' => $this->user->id,
                 'user_id' => $parent->id,
@@ -346,7 +346,7 @@ class StartDataConversation extends Conversation
                         $recipient_user->phone ??
                         $recipient_user->name ??
                         $recipient_user->email
-                    )." принес Вам $parent_cashback литров пива BearBack-а",
+                    )." принес Вам $parent_cashback литров пива BeerBack-а",
             ]);
 
 
@@ -357,13 +357,13 @@ class StartDataConversation extends Conversation
         CashBackHistory::create([
             'amount' => $cashback,
             'bill_number' => $this->check_info,
-            'money_in_bill' =>  $this->bear_in_check,
+            'money_in_bill' =>  $this->beer_in_check,
             'employee_id' => $this->user->id,
             'user_id' => $recipient_user->id,
             'type' => 0,
         ]);
 
-        $this->mainMenu("Отлично! BearBack $cashback литров пива начислен пользователю " . (
+        $this->mainMenu("Отлично! BeerBack $cashback литров пива начислен пользователю " . (
                 $recipient_user->fio_from_telegram ??
                 $recipient_user->phone ??
                 $recipient_user->name ??
