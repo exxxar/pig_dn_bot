@@ -79,7 +79,7 @@ $botman->hears('.*Розыгрыш', function ($bot) {
 
     $keybord = [
         [
-            ['text' => "Условия розыгрыша и призы", 'url' => "https://telegra.ph/Usloviya-rozygrysha-01-01"]
+            ['text' => "Условия розыгрыша и призы", 'url' => "https://telegra.ph/Rozygrysh-cennyh-prizov-06-23"]
         ],
         [
             ['text' => "Ввести код и начать", 'callback_data' => "/lottery"]
