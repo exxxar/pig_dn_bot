@@ -101,12 +101,10 @@ $botman->hears('.*О нас', function ($bot) {
 });
 
 $botman->hears("/start ([0-9a-zA-Z=]+)", BotManController::class . '@startDataConversation');
-
 $botman->hears('/start', function ($bot) {
     createUser($bot);
     mainMenu($bot, 'Главное меню');
 })->stopsConversation();
-
 $botman->hears('.*Новое меню', function ($bot) {
     $telegramUser = $bot->getUser();
     $id = $telegramUser->getId();
@@ -124,7 +122,7 @@ $botman->hears('.*Новое меню', function ($bot) {
             "text" => "https://telegra.ph/Menyu-06-21-2",
         ]);
 });
-$botman->hears('.*Special BearBack System', function ($bot) {
+$botman->hears('.*Special BearBack system', function ($bot) {
     $telegramUser = $bot->getUser();
     $id = $telegramUser->getId();
 
@@ -272,7 +270,7 @@ $botman->hears('/bearback_up', function ($bot) {
 
     $keyboard = [
         [
-            ['text' => "Списания", 'callback_data' => "/cashback_down"],
+            ['text' => "Выпито", 'callback_data' => "/bearback_down"],
         ],
     ];
 
@@ -290,14 +288,14 @@ $botman->hears('/bearback_up', function ($bot) {
         ->get();
 
     if (count($cashback) == 0)
-        $message = "На текущий момент у вас нет начислений CashBack";
+        $message = "На текущий момент у вас нет бонусный литров BearBack";
     else {
         $tmp = "";
 
         foreach ($cashback as $key => $value)
-            $tmp .= sprintf("#%s %s начислено %s руб., чек: %s\n ", ($key+1), $value->created_at, $value->amount, $value->bill_number);
+            $tmp .= sprintf("#%s %s начислено %s литров пива, чек: %s\n ", ($key+1), $value->created_at, $value->amount, $value->bill_number);
 
-        $message = sprintf("*Статистика 20 последних начислений Cashback*\n%s", $tmp);
+        $message = sprintf("*Статистика 20 последних начислений BearBack*\n%s", $tmp);
 
     }
 
@@ -331,20 +329,20 @@ $botman->hears('/bearback_down', function ($bot) {
         ->get();
 
     if (count($cashback) == 0)
-        $message = "На текущий момент у вас нет списаний CashBack";
+        $message = "На текущий момент у вас нет списаний бонусных литров BearBack";
     else {
         $tmp = "";
 
         foreach ($cashback as $key => $value)
-            $tmp .= sprintf("#%s %s списано %s руб. \n ", ($key+1), $value->created_at, $value->amount);
+            $tmp .= sprintf("#%s %s списано %s литров пива\n ", ($key+1), $value->created_at, $value->amount);
 
-        $message = sprintf("*Статистика 20 последних списаний Cashback*\n%s", $tmp);
+        $message = sprintf("*Статистика 20 последних списаний BearBack*\n%s", $tmp);
 
     }
 
     $keyboard = [
         [
-            ['text' => "Начисления", 'callback_data' => "/cashback_up"],
+            ['text' => "Получено", 'callback_data' => "/bearback_up"],
         ],
     ];
 

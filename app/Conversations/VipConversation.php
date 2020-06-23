@@ -34,7 +34,8 @@ class VipConversation extends Conversation
                 'telegram_chat_id' => $id,
                 'is_admin' => false,
                 'is_vip' => false,
-                'cashback_money' => false,
+                'cashback_bear' => 0,
+                'cashback_money' => 0,
                 'phone' => '',
                 'birthday' => '',
             ]);
@@ -60,7 +61,7 @@ class VipConversation extends Conversation
         if (!$user->is_vip)
             array_push($keyboard, ["\xE2\x9A\xA1Анкета VIP-пользователя"]);
         else
-            array_push($keyboard, ["\xE2\x9A\xA1Special CashBack system"]);
+            array_push($keyboard, ["\xE2\x9A\xA1Special BearBack system"]);
 
         array_push($keyboard,["\xF0\x9F\x8E\xB0Розыгрыш"]);
         array_push($keyboard,["\xF0\x9F\x92\xADО Нас"]);
@@ -127,16 +128,16 @@ class VipConversation extends Conversation
 
                 CashBackHistory::create([
                     'amount'=>100,
-                    'bill_number'=>'Gift From Isushi',
+                    'bill_number'=>'Подарок за регистрацию',
                     'money_in_bill'=>0,
                     'employee_id'=>null,
                     'user_id'=>$this->user->id,
                     'type'=>0,
                 ]);
 
-                $this->bot->reply("Вам начислено 100 руб. CashBack");
+                $this->bot->reply("Вам начислено 0.3 литра пива!");
 
-                $this->mainMenu("Теперь Вы VIP-пользователь и у вас есть возможность накапливать CashBack!");
+                $this->mainMenu("Теперь Вы VIP-пользователь и у вас есть возможность накапливать пивные литры в системе BearBack!");
 
             }
 
