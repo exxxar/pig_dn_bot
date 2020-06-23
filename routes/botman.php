@@ -54,7 +54,7 @@ function mainMenu($bot, $message)
     if (!$user->is_vip)
         array_push($keyboard, ["\xE2\x9A\xA1Анкета VIP-пользователя"]);
     else
-        array_push($keyboard, ["\xE2\x9A\xA1Special BearBack system"]);
+        array_push($keyboard, ["\xE2\x9A\xA1Special BeerBack system"]);
 
     array_push($keyboard,["\xF0\x9F\x8E\xB0Розыгрыш"]);
     array_push($keyboard,["\xF0\x9F\x92\xADО Нас"]);
@@ -97,7 +97,7 @@ $botman->hears('.*Розыгрыш', function ($bot) {
         ]);
 });
 $botman->hears('.*О нас', function ($bot) {
-    $bot->reply("https://telegra.ph/O-Nas-06-21");
+    $bot->reply("https://telegra.ph/O-Nas-06-23");
 });
 
 $botman->hears("/start ([0-9a-zA-Z=]+)", BotManController::class . '@startDataConversation');
@@ -119,10 +119,10 @@ $botman->hears('.*Новое меню', function ($bot) {
     $bot->sendRequest("sendMessage",
         [
             "chat_id" => "$id",
-            "text" => "https://telegra.ph/Menyu-06-21-2",
+            "text" => "https://telegra.ph/Menyu-06-23-2",
         ]);
 });
-$botman->hears('.*Special BearBack system', function ($bot) {
+$botman->hears('.*Special BeerBack system', function ($bot) {
     $telegramUser = $bot->getUser();
     $id = $telegramUser->getId();
 
@@ -131,7 +131,7 @@ $botman->hears('.*Special BearBack system', function ($bot) {
     if (is_null($user))
         $user = createUser($bot);
 
-    $bearback = $user->cashback_bear ?? 0;
+    $beerback = $user->cashback_beer ?? 0;
 
     $is_vip = $user->is_vip ?? false;
 
@@ -156,10 +156,10 @@ $botman->hears('.*Special BearBack system', function ($bot) {
         return;
     }
 
-    $message = sprintf("У вас *%s* литров пива!\n_Для начисления BearBack литров при оплате за меню дайте отсканировать данный QR-код нашему сотруднику_", $bearback);
+    $message = sprintf("У вас *%s* литров пива!\n_Для начисления BeerBack литров при оплате за меню дайте отсканировать данный QR-код нашему сотруднику_", $beerback);
     $keyboard = [
         [
-            ['text' => "Мой пивной бюджет", 'callback_data' => "/my_bear"],
+            ['text' => "Мой пивной бюджет", 'callback_data' => "/my_beer"],
         ],
     ];
 
@@ -242,21 +242,21 @@ $botman->hears('/check_lottery_slot ([0-9]+)', function ($bot, $slotId) {
 
 
 });
-$botman->hears('/my_bear', function ($bot) {
+$botman->hears('/my_beer', function ($bot) {
     $telegramUser = $bot->getUser();
     $id = $telegramUser->getId();
 
     $keyboard = [
         [
-            ['text' => "Получено", 'callback_data' => "/bearback_up"],
-            ['text' => "Выпито", 'callback_data' => "/bearback_down"],
+            ['text' => "Получено", 'callback_data' => "/beerback_up"],
+            ['text' => "Выпито", 'callback_data' => "/beerback_down"],
         ],
     ];
 
     $bot->sendRequest("sendMessage",
         [
             "chat_id" => "$id",
-            "text" => "*Управление вашими начислениями и расходами BearBack*",
+            "text" => "*Управление вашими начислениями и расходами BeerBack*",
             "parse_mode" => "Markdown",
             'reply_markup' => json_encode([
                 'inline_keyboard' =>
@@ -264,13 +264,13 @@ $botman->hears('/my_bear', function ($bot) {
             ])
         ]);
 });
-$botman->hears('/bearback_up', function ($bot) {
+$botman->hears('/beerback_up', function ($bot) {
     $telegramUser = $bot->getUser();
     $id = $telegramUser->getId();
 
     $keyboard = [
         [
-            ['text' => "Выпито", 'callback_data' => "/bearback_down"],
+            ['text' => "Выпито", 'callback_data' => "/beerback_down"],
         ],
     ];
 
@@ -288,14 +288,14 @@ $botman->hears('/bearback_up', function ($bot) {
         ->get();
 
     if (count($cashback) == 0)
-        $message = "На текущий момент у вас нет бонусный литров BearBack";
+        $message = "На текущий момент у вас нет бонусный литров BeerBack";
     else {
         $tmp = "";
 
         foreach ($cashback as $key => $value)
             $tmp .= sprintf("#%s %s начислено %s литров пива, чек: %s\n ", ($key+1), $value->created_at, $value->amount, $value->bill_number);
 
-        $message = sprintf("*Статистика 20 последних начислений BearBack*\n%s", $tmp);
+        $message = sprintf("*Статистика 20 последних начислений BeerBack*\n%s", $tmp);
 
     }
 
@@ -311,7 +311,7 @@ $botman->hears('/bearback_up', function ($bot) {
             ])
         ]);
 });
-$botman->hears('/bearback_down', function ($bot) {
+$botman->hears('/beerback_down', function ($bot) {
     $telegramUser = $bot->getUser();
     $id = $telegramUser->getId();
 
@@ -329,20 +329,20 @@ $botman->hears('/bearback_down', function ($bot) {
         ->get();
 
     if (count($cashback) == 0)
-        $message = "На текущий момент у вас нет списаний бонусных литров BearBack";
+        $message = "На текущий момент у вас нет списаний бонусных литров BeerBack";
     else {
         $tmp = "";
 
         foreach ($cashback as $key => $value)
             $tmp .= sprintf("#%s %s списано %s литров пива\n ", ($key+1), $value->created_at, $value->amount);
 
-        $message = sprintf("*Статистика 20 последних списаний BearBack*\n%s", $tmp);
+        $message = sprintf("*Статистика 20 последних списаний BeerBack*\n%s", $tmp);
 
     }
 
     $keyboard = [
         [
-            ['text' => "Получено", 'callback_data' => "/bearback_up"],
+            ['text' => "Получено", 'callback_data' => "/beerback_up"],
         ],
     ];
 
