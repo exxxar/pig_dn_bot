@@ -60,6 +60,9 @@ function mainMenu($bot, $message)
     array_push($keyboard,["\xF0\x9F\x8E\xB0Розыгрыш"]);
     array_push($keyboard,["\xF0\x9F\x92\xADО Нас"]);
 
+    if ($user->is_admin)
+        array_push($keyboard,["\xE2\x9A\xA0Админ. статистика"]);
+
     $bot->sendRequest("sendMessage",
         [
             "chat_id" => "$id",
@@ -72,7 +75,31 @@ function mainMenu($bot, $message)
             ])
         ]);
 }
+$botman->hears('.*Админ. статистика', function ($bot) {
+    $users_in_bd = User::all()->count();
+    $vip_in_bd = User::where("is_vip",true)->get()->count();
 
+    $vip_in_bd_day = User::whereDate('updated_at', Carbon::today())
+        ->where("is_vip",true)
+        ->orderBy("id", "DESC")
+        ->get()
+        ->count();
+
+    $users_in_bd_day = User::whereDate('created_at', Carbon::today())
+        ->orderBy("id", "DESC")
+        ->get()
+        ->count();
+
+    $message = sprintf("Всего пользователей в бд: %s\nВсего VIP:%s\nПользователей за день:%s\nVIP за день:%s",
+        $users_in_bd,
+        $vip_in_bd,
+        $users_in_bd_day,
+        $vip_in_bd_day
+    );
+
+    $bot->reply($message);
+
+})->stopsConversation();
 $botman->hears(".*Анкета VIP-пользователя|/do_vip", BotManController::class . "@vipConversation");
 $botman->hears('.*Розыгрыш', function ($bot) {
     $telegramUser = $bot->getUser();
