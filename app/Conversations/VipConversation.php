@@ -89,66 +89,69 @@ class VipConversation extends Conversation
 
     public function askPhone()
     {
-        $question = Question::create('Скажие мне свой телефонный номер в формате 071XXXXXXX')
+        $question = Question::create('Скажите мне свой телефонный номер в формате 071XXXXXXX')
             ->fallback('Спасибо что пообщался со мной:)!');
 
-        $this->ask($question, function (Answer $answer) {
-            $vowels = array("(", ")", "-", " ");
-            $tmp_phone = $answer->getText();
-            $tmp_phone = str_replace($vowels, "", $tmp_phone);
-            if (strpos($tmp_phone, "+38") === false)
-                $tmp_phone = "+38" . $tmp_phone;
+        try {
+            $this->ask($question, function (Answer $answer) {
+                $vowels = array("(", ")", "-", " ");
+                $tmp_phone = $answer->getText();
+                $tmp_phone = str_replace($vowels, "", $tmp_phone);
+                if (strpos($tmp_phone, "+38") === false)
+                    $tmp_phone = "+38" . $tmp_phone;
 
-            Log::info("phone=$tmp_phone");
+                Log::info("phone=$tmp_phone");
 
-            $pattern = "/^\+380\d{3}\d{2}\d{2}\d{2}$/";
-            if (preg_match($pattern, $tmp_phone) == 0) {
-                $this->bot->reply("Номер введен не верно...\n");
-                $this->askPhone();
-                return;
-            } else {
-                $tmp_user = User::where("phone",$tmp_phone)->first();
+                $pattern = "/^\+380\d{3}\d{2}\d{2}\d{2}$/";
+                if (preg_match($pattern, $tmp_phone) == 0) {
+                    $this->bot->reply("Номер введен не верно...\n");
+                    $this->askPhone();
+                    return;
+                } else {
+                    $tmp_user = User::where("phone", $tmp_phone)->first();
 
-                if (!is_null($tmp_user))
-                {
+                    if (!is_null($tmp_user)) {
 
-                    if (!is_null($tmp_user->telegram_chat_id)){
-                        $this->bot->reply("Данный номер уже связан с учетной записью телеграм!\n");
-                        $this->askPhone();
-                        return;
+                        if (!is_null($tmp_user->telegram_chat_id)) {
+                            $this->bot->reply("Данный номер уже связан с учетной записью телеграм!\n");
+                            $this->askPhone();
+                            return;
+                        }
+                        $telegramUser = $this->bot->getUser();
+                        $id = $telegramUser->getId();
+
+                        $tmp_user->telegram_chat_id = $id;
+                        $tmp_user->save();
+
                     }
-                    $telegramUser = $this->bot->getUser();
-                    $id = $telegramUser->getId();
 
-                    $tmp_user->telegram_chat_id = $id;
-                    $tmp_user->save();
+
+                    $this->user->phone = $tmp_phone;
+                    $this->user->is_vip = true;
+                    $this->user->cashback_beer += 0.3;
+                    $this->user->save();
+
+
+                    CashBackHistory::create([
+                        'amount' => 0.3,
+                        'bill_number' => 'Подарок за регистрацию',
+                        'money_in_bill' => 0,
+                        'bear_in_bill' => 0,
+                        'employee_id' => null,
+                        'user_id' => $this->user->id,
+                        'type' => 0,
+                    ]);
+
+                    $this->bot->reply("Вам начислено 0.3 литра пива!");
+
+                    $this->mainMenu("Теперь Вы VIP-пользователь и у вас есть возможность накапливать пивные литры в системе BeerBack!");
 
                 }
 
-
-                $this->user->phone = $tmp_phone;
-                $this->user->is_vip = true;
-                $this->user->cashback_beer += 0.3 ;
-                $this->user->save();
-
-
-                CashBackHistory::create([
-                    'amount'=>0.3,
-                    'bill_number'=>'Подарок за регистрацию',
-                    'money_in_bill'=>0,
-                    'bear_in_bill'=>0,
-                    'employee_id'=>null,
-                    'user_id'=>$this->user->id,
-                    'type'=>0,
-                ]);
-
-                $this->bot->reply("Вам начислено 0.3 литра пива!");
-
-                $this->mainMenu("Теперь Вы VIP-пользователь и у вас есть возможность накапливать пивные литры в системе BeerBack!");
-
-            }
-
-        });
+            });
+        }catch (\Exception $e){
+            $this->bot->reply("Упс... ошибка...".$e->getMessage()." ".$e->getLine());
+        }
     }
 
     /**
