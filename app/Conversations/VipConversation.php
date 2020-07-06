@@ -94,6 +94,7 @@ class VipConversation extends Conversation
 
         try {
             $this->ask($question, function (Answer $answer) {
+                $this->bot->reply("TEST");
                 $vowels = array("(", ")", "-", " ");
                 $tmp_phone = $answer->getText();
                 $tmp_phone = str_replace($vowels, "", $tmp_phone);
