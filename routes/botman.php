@@ -125,7 +125,7 @@ $botman->hears('.*Розыгрыш', function ($bot) {
         ]);
 })->stopsConversation();
 $botman->hears('.*О нас', function ($bot) {
-    $bot->reply("https://telegra.ph/O-Nas-06-23");
+    $bot->reply("https://telegra.ph/O-Nas-07-06-2");
 })->stopsConversation();
 
 $botman->hears("/start ([0-9a-zA-Z=]+)", BotManController::class . '@startDataConversation');
@@ -147,7 +147,7 @@ $botman->hears('.*Новое меню', function ($bot) {
     $bot->sendRequest("sendMessage",
         [
             "chat_id" => "$id",
-            "text" => "https://telegra.ph/Menyu-06-23-2",
+            "text" => "https://telegra.ph/Menyu-07-06",
         ]);
 });
 $botman->hears('.*Special BeerBack system', function ($bot) {

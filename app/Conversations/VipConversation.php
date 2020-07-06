@@ -42,15 +42,15 @@ class VipConversation extends Conversation
         return $user;
     }
 
-    function mainMenu( $message)
+    function mainMenu($message)
     {
         $telegramUser = $this->bot->getUser();
         $id = $telegramUser->getId();
 
-        $user = User::where("telegram_chat_id",$id)->first();
+        $user = User::where("telegram_chat_id", $id)->first();
 
         if (is_null($user))
-            $user=$this->createUser();
+            $user = $this->createUser();
 
 
         $keyboard = [
@@ -63,8 +63,8 @@ class VipConversation extends Conversation
         else
             array_push($keyboard, ["\xE2\x9A\xA1Special BeerBack system"]);
 
-        array_push($keyboard,["\xF0\x9F\x8E\xB0Розыгрыш"]);
-        array_push($keyboard,["\xF0\x9F\x92\xADО Нас"]);
+        array_push($keyboard, ["\xF0\x9F\x8E\xB0Розыгрыш"]);
+        array_push($keyboard, ["\xF0\x9F\x92\xADО Нас"]);
 
         $this->bot->sendRequest("sendMessage",
             [
@@ -100,8 +100,6 @@ class VipConversation extends Conversation
                 if (strpos($tmp_phone, "+38") === false)
                     $tmp_phone = "+38" . $tmp_phone;
 
-                Log::info("phone=$tmp_phone");
-
                 $pattern = "/^\+380\d{3}\d{2}\d{2}\d{2}$/";
                 if (preg_match($pattern, $tmp_phone) == 0) {
                     $this->bot->reply("Номер введен не верно...\n");
@@ -117,13 +115,16 @@ class VipConversation extends Conversation
                             $this->askPhone();
                             return;
                         }
+
+
                         $telegramUser = $this->bot->getUser();
                         $id = $telegramUser->getId();
 
                         $tmp_user->telegram_chat_id = $id;
                         $tmp_user->save();
 
-                    }
+                    } else
+                        $this->user = $this->createUser();
 
 
                     $this->user->phone = $tmp_phone;
@@ -149,8 +150,8 @@ class VipConversation extends Conversation
                 }
 
             });
-        }catch (\Exception $e){
-            $this->bot->reply("Упс... ошибка...".$e->getMessage()." ".$e->getLine());
+        } catch (\Exception $e) {
+            $this->bot->reply("Упс... ошибка..." . $e->getMessage() . " " . $e->getLine());
         }
     }
 
