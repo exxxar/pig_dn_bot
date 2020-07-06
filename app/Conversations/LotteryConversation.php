@@ -49,7 +49,6 @@ class LotteryConversation extends Conversation
                 return;
             }
 
-
             if ($code->activated == true) {
                 $this->bot->reply("Код уже был использован");
                 return;
