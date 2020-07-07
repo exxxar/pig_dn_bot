@@ -52,7 +52,7 @@ class StartDataConversation extends Conversation
                 'is_vip' => false,
                 'cashback_money' => false,
                 'phone' => '',
-                'parent_id' =>$parent->id??null,
+                'parent_id' => $parent->id ?? null,
                 'birthday' => '',
             ]);
         return $user;
@@ -81,7 +81,7 @@ class StartDataConversation extends Conversation
         array_push($keyboard, ["\xF0\x9F\x92\xADО Нас"]);
 
         if ($user->is_admin)
-            array_push($keyboard,["\xE2\x9A\xA0Админ. статистика"]);
+            array_push($keyboard, ["\xE2\x9A\xA0Админ. статистика"]);
 
 
         $this->bot->sendRequest("sendMessage",
@@ -145,8 +145,7 @@ class StartDataConversation extends Conversation
         $this->user = User::where("telegram_chat_id", $id)->first();
 
         if (!is_null($this->user))
-            if (!$this->user->is_admin)
-            {
+            if (!$this->user->is_admin) {
                 $this->mainMenu("Главное меню");
                 return;
             }
@@ -157,7 +156,7 @@ class StartDataConversation extends Conversation
             Telegram::sendMessage([
                 'chat_id' => $this->request_user_id,
                 'parse_mode' => 'Markdown',
-                'text' => "По вашей реферальной ссылке перешел пользователь ".(
+                'text' => "По вашей реферальной ссылке перешел пользователь " . (
                         $this->user->fio_from_telegram ??
                         $this->user->phone ??
                         $this->user->name ??
@@ -169,7 +168,6 @@ class StartDataConversation extends Conversation
             return;
 
         }
-
 
 
         if (!$this->user->is_admin) {
@@ -319,13 +317,13 @@ class StartDataConversation extends Conversation
             return;
         }
 
-        $cashback = ((intval( $this->beer_in_check)??0)*env("CAHSBAK_PROCENT")/100);
-        $parent_cashback = ((intval( $this->beer_in_check)??0)*env("NETWORK_CAHSBAK_PROCENT")/100);
+        $cashback = ((intval($this->beer_in_check) ?? 0) * env("CAHSBAK_PROCENT") / 100);
+        $parent_cashback = ((intval($this->beer_in_check) ?? 0) * env("NETWORK_CAHSBAK_PROCENT") / 100);
 
         $recipient_user->cashback_beer += $cashback;
         $recipient_user->save();
 
-        if (!is_null($recipient_user->parent_id)){
+        if (!is_null($recipient_user->parent_id)) {
 
             $parent = $recipient_user->parent;
             $parent->cashback_beer += $parent_cashback;
@@ -335,7 +333,7 @@ class StartDataConversation extends Conversation
             CashBackHistory::create([
                 'amount' => $parent_cashback,
                 'bill_number' => "BeerBack от друга",
-                'money_in_bill' => $parent_cashback ,
+                'money_in_bill' => $parent_cashback,
                 'employee_id' => $this->user->id,
                 'user_id' => $parent->id,
                 'type' => 0,
@@ -345,14 +343,13 @@ class StartDataConversation extends Conversation
             Telegram::sendMessage([
                 'chat_id' => $parent->telegram_chat_id,
                 'parse_mode' => 'Markdown',
-                'text' => "Ваш друг ".(
+                'text' => "Ваш друг " . (
                         $recipient_user->fio_from_telegram ??
                         $recipient_user->phone ??
                         $recipient_user->name ??
                         $recipient_user->email
-                    )." принес Вам $parent_cashback литров пива BeerBack-а",
+                    ) . " принес Вам $parent_cashback литров пива BeerBack-а",
             ]);
-
 
 
         }
@@ -361,7 +358,7 @@ class StartDataConversation extends Conversation
         CashBackHistory::create([
             'amount' => $cashback,
             'bill_number' => $this->check_info,
-            'money_in_bill' =>  $this->beer_in_check,
+            'money_in_bill' => $this->beer_in_check,
             'employee_id' => $this->user->id,
             'user_id' => $recipient_user->id,
             'type' => 0,
@@ -375,11 +372,15 @@ class StartDataConversation extends Conversation
             )
         );
 
-        Telegram::sendMessage([
-            'chat_id' => $recipient_user->telegram_chat_id,
-            'parse_mode' => 'Markdown',
-            'text' => "На ваш пивной счет начислено $cashback литров пива.",
-        ]);
+        try {
+            Telegram::sendMessage([
+                'chat_id' => $recipient_user->telegram_chat_id,
+                'parse_mode' => 'Markdown',
+                'text' => "На ваш пивной счет начислено $cashback литров пива.",
+            ]);
+        } catch (\Exception $e) {
+
+        }
 
 
     }
