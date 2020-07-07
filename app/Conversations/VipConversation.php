@@ -129,11 +129,11 @@ class VipConversation extends Conversation
 
                     $this->user->phone = $tmp_phone;
                     $this->user->is_vip = true;
-                    $this->user->cashback_beer += 0.3;
+                    //$this->user->cashback_beer += 0.3;
                     $this->user->save();
 
 
-                    CashBackHistory::create([
+                   /* CashBackHistory::create([
                         'amount' => 0.3,
                         'bill_number' => 'Подарок за регистрацию',
                         'money_in_bill' => 0,
@@ -141,9 +141,9 @@ class VipConversation extends Conversation
                         'employee_id' => null,
                         'user_id' => $this->user->id,
                         'type' => 0,
-                    ]);
+                    ]);*/
 
-                    $this->bot->reply("Вам начислено 0.3 литра пива!");
+                    //$this->bot->reply("Вам начислено 0.3 литра пива!");
 
                     $this->mainMenu("Теперь Вы VIP-пользователь и у вас есть возможность накапливать пивные литры в системе BeerBack!");
 

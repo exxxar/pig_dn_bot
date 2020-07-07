@@ -3,7 +3,6 @@
 namespace App\Conversations;
 
 use App\CashBackHistory;
-use App\Classes\BaseBot;
 use App\User;
 
 use BotMan\BotMan\Messages\Attachments\Image;
