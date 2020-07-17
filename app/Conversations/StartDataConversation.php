@@ -63,12 +63,10 @@ class StartDataConversation extends Conversation
 
     public function mainMenu($message)
     {
-        Log::info("in main menu");
+
         $telegramUser = $this->bot->getUser();
         $id = $telegramUser->getId();
 
-        Log::info("current_user=$id");
-        Log::info("remote_user=".$this->request_user_id);
 
         $user = User::where("telegram_chat_id", intval($id))->first();
 
@@ -176,27 +174,23 @@ class StartDataConversation extends Conversation
 
         }
 
-        Log::info("TEST ".$this->code." ".$this->request_user_id);
-
-
         if ($this->code == "005") {
 
-            Log::info("TEST 2=".$this->user->telegram_chat_id);
             $tmp_user_id = (string)$this->user->telegram_chat_id;
             while (strlen($tmp_user_id) < 10)
                 $tmp_user_id = "0" . $tmp_user_id;
 
             $code = base64_encode("001" . $tmp_user_id);
             $url_link = "https://t.me/" . env("APP_BOT_NAME") . "?start=$code";
-            Log::info("TEST 3=".$url_link);
+
             $keyboard = [
                 [
                     ['text' => "Запустить систему BeerBack", 'url' => "$url_link"],
 
                 ]
             ];
-            Log::info("TEST 4 $code");
-            try {
+
+
                 Telegram::sendMessage([
                     'chat_id' =>intval($this->request_user_id),
                     'parse_mode' => 'Markdown',
@@ -208,10 +202,7 @@ class StartDataConversation extends Conversation
                             $keyboard
                     ])
                 ]);
-            }catch (\Exception  $e) {
-                Log::info($e->getMessage()." ".$e->getLine());
-            }
-            Log::info("TEST 5");
+
             $this->mainMenu("Главное меню");
             return;
         }
