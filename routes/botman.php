@@ -1,5 +1,6 @@
 <?php
 
+use App\Drivers\TelegramInlineQueryDriver;
 use App\Http\Controllers\BotManController;
 use App\Prize;
 use App\Product;
@@ -190,6 +191,18 @@ $botman->hears('.*Special BeerBack system', function ($bot) {
             ['text' => "Мой пивной бюджет", 'callback_data' => "/my_beer"],
         ],
     ];
+
+    $work_admin_count = User::where("is_admin",true)
+            ->where("is_working",true)
+            ->get()
+            ->count()??0;
+
+    if ($work_admin_count>0)
+    {
+        array_push($keyboard, [
+            ['text' => "Запрос на BearBack", 'switch_inline_query_current_chat' => ""],
+        ]);
+    }
 
     /*$keyboard2 = [
         [
@@ -384,5 +397,72 @@ $botman->hears('/beerback_down', function ($bot) {
                     $keyboard
             ])
         ]);
+});
+
+$botman->fallback(function ($bot) {
+    $bot->loadDriver(TelegramInlineQueryDriver::DRIVER_NAME);
+
+
+    $queryObject = json_decode($bot->getDriver()->getEvent());
+
+    if ($queryObject) {
+
+        $id = $queryObject->from->id;
+
+        $query = $queryObject->query;
+
+        $button_list = [];
+
+        $users =
+            User::where("is_admin", true)
+                ->where("is_working", true)
+                ->orderBy("id", "DESC")
+                ->take(8)
+                ->skip(0)
+                ->get();
+
+        if (!empty($users))
+            foreach ($users as $user) {
+
+                $tmp_user_id = (string)$user->telegram_chat_id;
+                while (strlen($tmp_user_id) < 10)
+                    $tmp_user_id = "0" . $tmp_user_id;
+
+                $code = base64_encode("005" . $tmp_user_id);
+                $url_link = "https://t.me/" . env("APP_BOT_NAME") . "?start=$code";
+
+                $tmp_button = [
+                    'type' => 'article',
+                    'id' => uniqid(),
+                    'title' => "Запрос на BearBack",
+                    'input_message_content' => [
+                        'message_text' => sprintf("Администратор #%s %s (%s)", $user->id, ($user->fio_from_telegram ?? $user->name), ($user->phone ?? 'Без телефона')),
+                    ],
+                    'reply_markup' => [
+                        'inline_keyboard' => [
+                            [
+                                ['text' => "\xF0\x9F\x91\x89Запросить BearBack у администратора", "url" => "$url_link"],
+                            ],
+
+                        ]
+                    ],
+                    'thumb_url' => "https://sun2.48276.userapi.com/VQUteM8umQoJlf-iFwhB9pyglhTAvWdV8_t2UA/b2zse5uYzfk.jpg",
+                    'url' => env("APP_URL"),
+                    'description' => sprintf("Администратор #%s %s (%s)", $user->id, ($user->fio_from_telegram ?? $user->name), ($user->phone ?? 'Без телефона')),
+                    'hide_url' => true
+                ];
+
+                array_push($button_list, $tmp_button);
+
+
+            }
+
+        return $bot->sendRequest("answerInlineQuery",
+            [
+                'cache_time' => 0,
+                "inline_query_id" => json_decode($bot->getEvent())->id,
+                "results" => json_encode($button_list)
+            ]);
+    }
 });
 

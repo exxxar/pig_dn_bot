@@ -27,6 +27,7 @@ class CreateUsersTable extends Migration
 
             $table->boolean('is_admin')->default(false);
             $table->boolean('is_vip')->default(false);
+            $table->boolean('is_working')->default(false);
             $table->double('cashback_money')->default(0.0);
             $table->double('cashback_beer')->default(0.0);
 

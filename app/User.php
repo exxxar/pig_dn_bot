@@ -27,6 +27,7 @@ class User extends Authenticatable
         'is_vip',
         'birthday',
         'is_admin',
+        'is_working',
         'parent_id'
     ];
 
