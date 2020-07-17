@@ -153,7 +153,7 @@ class StartDataConversation extends Conversation
             $this->user = $this->createUser();
 
             Telegram::sendMessage([
-                'chat_id' => $this->request_user_id,
+                'chat_id' => intval($this->request_user_id),
                 'parse_mode' => 'Markdown',
                 'text' => "По вашей реферальной ссылке перешел пользователь " . (
                         $this->user->fio_from_telegram ??
@@ -168,14 +168,19 @@ class StartDataConversation extends Conversation
 
         }
 
+        Log::info("TEST ".$this->code);
+
+
         if ($this->code == "005") {
+
+            Log::info("TEST 2=".$this->user->telegram_chat_id);
             $tmp_user_id = (string)$this->user->telegram_chat_id;
             while (strlen($tmp_user_id) < 10)
                 $tmp_user_id = "0" . $tmp_user_id;
 
             $code = base64_encode("001" . $tmp_user_id);
             $url_link = "https://t.me/" . env("APP_BOT_NAME") . "?start=$code";
-
+            Log::info("TEST 3=".$url_link);
             $keyboard = [
                 [
                     ['text' => "Запустить систему BeerBack", 'url' => "$url_link"],
