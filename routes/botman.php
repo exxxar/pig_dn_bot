@@ -128,8 +128,6 @@ $botman->hears('.*Админ. статистика', function ($bot) {
             ])
         ]);
 
-    $bot->reply($message);
-
 })->stopsConversation();
 $botman->hears(".*Анкета VIP-пользователя|/do_vip", BotManController::class . "@vipConversation");
 $botman->hears('.*Розыгрыш', function ($bot) {
