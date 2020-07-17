@@ -37,7 +37,9 @@ class StartDataConversation extends Conversation
         $lastName = $telegramUser->getLastName();
         $firstName = $telegramUser->getFirstName();
 
-        $user = User::where("telegram_chat_id", $id)->first();
+        Log::info("current_user=$id");
+        Log::info("remote_user=".$this->request_user_id);
+        $user = User::where("telegram_chat_id",intval( $id))->first();
         $parent = User::where("telegram_chat_id", intval($this->request_user_id))->first();
 
         if ($user == null)
@@ -118,7 +120,7 @@ class StartDataConversation extends Conversation
         try {
             $this->startWithData();
         } catch (\Exception $e) {
-            Log::error(get_class($this) . " " . $e->getMessage() . " " . $e->getLine()." ".$e->getTraceAsString());
+            Log::error(get_class($this) . " " . $e->getMessage() . " " . $e->getLine());
         }
     }
 
