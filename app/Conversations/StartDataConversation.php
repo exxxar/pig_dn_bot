@@ -198,18 +198,18 @@ class StartDataConversation extends Conversation
             Log::info("TEST 4 $code");
             try {
                 Telegram::sendMessage([
-                    'chat_id' => "484698703",
+                    'chat_id' =>intval($this->request_user_id),
                     'parse_mode' => 'Markdown',
-                    'text' => "Test"/* sprintf("Пользователь %s (%s) хочет воспользоваться услугой BeerBack",
+                    'text' =>  sprintf("Пользователь %s (%s) хочет воспользоваться услугой BeerBack",
                     ($this->user->name ?? $this->user->fio_from_telegram ?? $this->user->telegram_chat_id??"Ошибка"),
-                    ($this->user->phone ?? "У пользователя нет телефонного номера"))*/,
+                    ($this->user->phone ?? "У пользователя нет телефонного номера")),
                     'reply_markup' => json_encode([
                         'inline_keyboard' =>
                             $keyboard
                     ])
                 ]);
             }catch (\Exception  $e) {
-                Log::info($e->getTraceAsString());
+                Log::info($e->getMessage()." ".$e->getLine());
             }
             Log::info("TEST 5");
             $this->mainMenu("Главное меню");
