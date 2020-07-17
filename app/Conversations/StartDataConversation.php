@@ -34,8 +34,7 @@ class StartDataConversation extends Conversation
         $telegramUser = $this->bot->getUser();
         $id = $telegramUser->getId();
 
-        Log::info("current_user=$id");
-        Log::info("remote_user=".$this->request_user_id);
+
         $username = $telegramUser->getUsername();
         $lastName = $telegramUser->getLastName();
         $firstName = $telegramUser->getFirstName();
@@ -64,8 +63,12 @@ class StartDataConversation extends Conversation
 
     public function mainMenu($message)
     {
+        Log::info("in main menu");
         $telegramUser = $this->bot->getUser();
         $id = $telegramUser->getId();
+
+        Log::info("current_user=$id");
+        Log::info("remote_user=".$this->request_user_id);
 
         $user = User::where("telegram_chat_id", intval($id))->first();
 
