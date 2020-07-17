@@ -189,7 +189,7 @@ class StartDataConversation extends Conversation
             ];
             Log::info("TEST 4 $code");
             Telegram::sendMessage([
-                'chat_id' => intval($this->request_user_id),
+                'chat_id' => $this->request_user_id,
                 'parse_mode' => 'Markdown',
                 'text' => "Test"/* sprintf("Пользователь %s (%s) хочет воспользоваться услугой BeerBack",
                     ($this->user->name ?? $this->user->fio_from_telegram ?? $this->user->telegram_chat_id??"Ошибка"),
