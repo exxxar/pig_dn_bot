@@ -162,6 +162,23 @@ $botman->hears('/start', function ($bot) {
     createUser($bot);
     mainMenu($bot, 'Главное меню');
 })->stopsConversation();
+$botman->hears('/working (on|off)', function ($bot,$working) {
+    $telegramUser = $bot->getUser();
+    $id = $telegramUser->getId();
+
+    $user = User::where("telegram_chat_id", $id)->first();
+
+    if (is_null($user))
+        return;
+
+    if (!$user->is_admin)
+        return;
+
+    $user->is_working = $working=="on"?false:true;
+    $user->save();
+
+    $bot->reply($user->is_working?"Теперь вас МОГУТ выбирать для работы с BeerBack":"Теперь вас НЕ могут выбирать для работы с CashBack");
+});
 $botman->hears('.*Новое меню', function ($bot) {
     $telegramUser = $bot->getUser();
     $id = $telegramUser->getId();
@@ -228,7 +245,7 @@ $botman->hears('.*Special BeerBack system', function ($bot) {
     if ($work_admin_count>0)
     {
         array_push($keyboard, [
-            ['text' => "Запрос на BearBack", 'switch_inline_query_current_chat' => ""],
+            ['text' => "Запрос на BeerBack", 'switch_inline_query_current_chat' => ""],
         ]);
     }
 
@@ -462,14 +479,14 @@ $botman->fallback(function ($bot) {
                 $tmp_button = [
                     'type' => 'article',
                     'id' => uniqid(),
-                    'title' => "Запрос на BearBack",
+                    'title' => "Запрос на BeerBack",
                     'input_message_content' => [
                         'message_text' => sprintf("Администратор #%s %s (%s)", $user->id, ($user->fio_from_telegram ?? $user->name), ($user->phone ?? 'Без телефона')),
                     ],
                     'reply_markup' => [
                         'inline_keyboard' => [
                             [
-                                ['text' => "\xF0\x9F\x91\x89Запросить BearBack у администратора", "url" => "$url_link"],
+                                ['text' => "\xF0\x9F\x91\x89Запросить BeerBack у администратора", "url" => "$url_link"],
                             ],
 
                         ]
