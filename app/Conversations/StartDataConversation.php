@@ -191,9 +191,9 @@ class StartDataConversation extends Conversation
             Telegram::sendMessage([
                 'chat_id' => intval($this->request_user_id),
                 'parse_mode' => 'Markdown',
-                'text' => sprintf("Пользователь %s (%s) хочет воспользоваться услугой BeerBack",
+                'text' => "Test"/* sprintf("Пользователь %s (%s) хочет воспользоваться услугой BeerBack",
                     ($this->user->name ?? $this->user->fio_from_telegram ?? $this->user->telegram_chat_id??"Ошибка"),
-                    ($this->user->phone ?? "У пользователя нет телефонного номера")),
+                    ($this->user->phone ?? "У пользователя нет телефонного номера"))*/,
                 'reply_markup' => json_encode([
                     'inline_keyboard' =>
                         $keyboard
