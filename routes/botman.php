@@ -77,6 +77,17 @@ function mainMenu($bot, $message)
         ]);
 }
 $botman->hears('.*Админ. статистика', function ($bot) {
+    $telegramUser = $bot->getUser();
+    $id = $telegramUser->getId();
+
+    $user = User::where("telegram_chat_id", $id)->first();
+
+    if (is_null($user))
+        return;
+
+    if (!$user->is_admin)
+        return;
+
     $users_in_bd = User::all()->count();
     $vip_in_bd = User::where("is_vip",true)->get()->count();
 
@@ -97,6 +108,25 @@ $botman->hears('.*Админ. статистика', function ($bot) {
         $users_in_bd_day,
         $vip_in_bd_day
     );
+
+    $is_working = $user->is_working;
+
+    $keybord = [
+        [
+            ['text' => !$is_working?"Я работаю!":"Я не работаю!", 'callback_data' => "/working ".($is_working?"on":"off")]
+        ],
+
+    ];
+    $bot->sendRequest("sendMessage",
+        [
+            "chat_id" => "$id",
+            "text" => $message,
+            "parse_mode" => "Markdown",
+            'reply_markup' => json_encode([
+                'inline_keyboard' =>
+                    $keybord
+            ])
+        ]);
 
     $bot->reply($message);
 
