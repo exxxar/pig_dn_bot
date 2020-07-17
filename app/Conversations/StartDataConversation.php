@@ -168,6 +168,35 @@ class StartDataConversation extends Conversation
 
         }
 
+        if ($this->code == "005") {
+            $tmp_user_id = (string)$this->user->telegram_chat_id;
+            while (strlen($tmp_user_id) < 10)
+                $tmp_user_id = "0" . $tmp_user_id;
+
+            $code = base64_encode("001" . $tmp_user_id);
+            $url_link = "https://t.me/" . env("APP_BOT_NAME") . "?start=$code";
+
+            $keyboard = [
+                [
+                    ['text' => "Запустить систему CashBack", 'url' => "$url_link"],
+
+                ]
+            ];
+
+            Telegram::sendMessage([
+                'chat_id' => $this->request_user_id,
+                'parse_mode' => 'Markdown',
+                'text' => sprintf("Пользователь %s (%s) хочет воспользоваться услугой CashBack",
+                    ($this->user->name ?? $this->user->fio_from_telegram ?? $this->user->telegram_chat_id),
+                    ($this->user->phone ?? "У пользователя нет телефонного номера")),
+                'reply_markup' => json_encode([
+                    'inline_keyboard' =>
+                        $keyboard
+                ])
+            ]);
+            $this->mainMenu("Главное меню");
+            return;
+        }
 
         if (!$this->user->is_admin) {
             $this->mainMenu("Недостаточно прав доступа для совершения данной операции");
