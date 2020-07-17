@@ -168,7 +168,7 @@ class StartDataConversation extends Conversation
 
         }
 
-        Log::info("TEST ".$this->code);
+        Log::info("TEST ".$this->code." ".$this->request_user_id);
 
 
         if ($this->code == "005") {
