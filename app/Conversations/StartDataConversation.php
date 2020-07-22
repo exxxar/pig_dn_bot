@@ -304,7 +304,7 @@ class StartDataConversation extends Conversation
                 return;
             }
 
-            $canPay = $recipient_user->cashback_money >= intval($nedded_bonus);
+            $canPay = $recipient_user->cashback_beer >= intval($nedded_bonus);
 
             if (!$canPay) {
                 $this->mainMenu("У пользователя недостаточно BeerBack-а!");
@@ -326,7 +326,7 @@ class StartDataConversation extends Conversation
                 'type' => 1,
             ]);
 
-            $recipient_user->cashback_money -= $nedded_bonus;
+            $recipient_user->cashback_beer -= $nedded_bonus;
             $recipient_user->save();
 
             Telegram::sendMessage([
@@ -335,7 +335,7 @@ class StartDataConversation extends Conversation
                 'text' => "С вашего пивного счета произведено списание $nedded_bonus литров пива!",
             ]);
 
-            $this->mainMenu("Спасибо! Успешно списалось $nedded_bonus литров пива. Остаток:" . $recipient_user->cashback_money . " литров.");
+            $this->mainMenu("Спасибо! Успешно списалось $nedded_bonus литров пива. Остаток:" . $recipient_user->cashback_beer . " литров.");
 
             $this->askForAction();
             return;
