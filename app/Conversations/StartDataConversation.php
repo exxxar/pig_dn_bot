@@ -122,7 +122,7 @@ class StartDataConversation extends Conversation
         try {
             $this->startWithData();
         } catch (\Exception $e) {
-            Log::error(get_class($this) . " " . $e->getMessage() . " " . $e->getLine());
+            Log::error(get_class($this) . " " . $e->getMessage() . " [" . $e->getLine()."]");
         }
     }
 
@@ -142,7 +142,7 @@ class StartDataConversation extends Conversation
         }
 
         $this->code = $matches[1][0];
-        $this->request_user_id = $matches[2][0];
+        $this->request_user_id = intval($matches[2][0]);
 
         $telegramUser = $this->bot->getUser();
         $id = $telegramUser->getId();
